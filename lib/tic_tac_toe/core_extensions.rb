@@ -15,8 +15,4 @@ class Array
   !any_empty?
   end
 
-  def draw?
-  grid.flatten.map { |cell| cell.value }.none_empty?
-  end
-
 end
