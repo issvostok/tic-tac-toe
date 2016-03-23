@@ -68,30 +68,30 @@ module TicTacToe
   end
 end
 
-  TestCell = Struct.new(:value)
-  let(:x_cell) { TestCell.new("X") }
-  let(:y_cell) { TestCell.new("Y") }
-  let(:empty) { TestCell.new }
+TestCell = Struct.new(:value)
+let(:x_cell) { TestCell.new("X") }
+let(:y_cell) { TestCell.new("Y") }
+let(:empty) { TestCell.new }
 
-  context "#game_over" do
+context "#game_over" do
   it "returns :winner if winner? is true" do
     board = Board.new
-    board.stub(:winner?) { true }
+    allow(board).to receive(:winner?) { true }
     expect(board.game_over).to eq :winner
   end
 
   it "returns :draw if winner? is false and draw? is true" do
     board = Board.new
-    board.stub(:winner?) { false }
-    board.stub(:draw?) { true }
+    allow(board).to receive(:winner?) { false }
+    allow(board).to receive(:draw?) { true }
     expect(board.game_over).to eq :draw
   end
 
   it "returns false if winner? is false and draw? is false" do
     board = Board.new
-    board.stub(:winner?) { false }
-    board.stub(:draw?) { false }
-    expect(board.game_over).to be_false
+    allow(board).to receive(:winner?) { false }
+    allow(board).to receive(:draw?) { false }
+    expect(board.game_over).to be_falsey
   end
 
   it "returns :winner when row has objects with values that are all the same" do
@@ -141,9 +141,9 @@ end
       [y_cell, empty, empty]
     ]
     board = Board.new(grid: grid)
-    expect(board.game_over).to be_false
-    end
+    expect(board.game_over).to be_falsey
   end
+end
 
  end
 end
