@@ -5,20 +5,21 @@ module TicTacToe
 
     let (:bob) { Player.new({color: "X", name: "bob"}) }
     let (:frank) { Player.new({color: "O", name: "frank"}) }
+    let (:game) { Game.new([bob, frank]) }
 
     context "#initialize" do
       it "randomly selects a current_player" do
-        Array.any_instance.stub(:shuffle) { [frank, bob] }
+        allow_any_instance_of(Array).to receive(:shuffle) { [frank, bob] }
         game = Game.new([bob, frank])
         expect(game.current_player).to eq frank
       end
 
-      it "randomly selects an other_player" do
-        Array.any_instance.stub(:shuffle) { [frank, bob] }
+      it "randomly selects an other player" do
+        allow_any_instance_of(Array).to receive(:shuffle) { [frank, bob] }
         game = Game.new([bob, frank])
         expect(game.other_player).to eq bob
-        end
       end
+    end
 
     context "#switch_players" do
       it "will set @current_player to @other_player" do
@@ -39,8 +40,15 @@ module TicTacToe
     context "#solicit_move" do
       it "asks the player to make a move" do
         game = Game.new([bob, frank])
-        game.stub(:current_player) { bob }
+        allow(game).to receive(:current_player) { bob }
         expected = "bob: Enter a number between 1 and 9 to make your move"
+        expect(game.solicit_move).to eq expected
+      end
+
+      it "generates the right message" do
+        game = Game.new([bob, frank])
+        game.stub_chain(:current_player, :name).and_return "frank"
+        expected = "frank: Enter a number between 1 and 9 to make your move"
         expect(game.solicit_move).to eq expected
       end
     end
@@ -55,20 +63,26 @@ module TicTacToe
         game = Game.new([bob, frank])
         expect(game.get_move("7")).to eq [0, 2]
       end
+
+      it "calls #human_move_to_coordinate" do
+        game = Game.new([bob, frank])
+        game.should_receive(:human_move_to_coordinate).with("x")
+        game.get_move("x")
+      end
     end
 
     context "#game_over_message" do
       it "returns '{current player name} won!' if board shows a winner" do
         game = Game.new([bob, frank])
-        game.stub(:current_player) { bob }
-        game.board.stub(:game_over) { :winner }
+        allow(game).to receive(:current_player) { bob }
+        allow(game.board).to receive(:game_over) { :winner }
         expect(game.game_over_message).to eq "bob won!"
       end
 
       it "returns 'The game ended in a tie' if board shows a draw" do
         game = Game.new([bob, frank])
-        game.stub(:current_player) { bob }
-        game.board.stub(:game_over) { :draw }
+        allow(game).to receive(:current_player) { bob }
+        allow(game.board).to receive(:game_over) { :draw }
         expect(game.game_over_message).to eq "The game ended in a tie"
       end
     end
