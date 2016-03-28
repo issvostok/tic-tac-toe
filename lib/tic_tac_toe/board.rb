@@ -1,7 +1,6 @@
 module TicTacToe
   class Board
     attr_reader :grid
-
     def initialize(input = {})
       @grid = input.fetch(:grid, default_grid)
     end
@@ -18,6 +17,12 @@ module TicTacToe
       return :winner if winner?
       return :draw if draw?
       false
+    end
+
+    def formatted_grid
+      grid.each do |row|
+        puts row.map { |cell| cell.value.empty? ? "_" : cell.value }.join(" ")
+      end
     end
 
     private
